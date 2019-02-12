@@ -1,0 +1,2 @@
+# qtbarcodereader
+バーコードリーダー
