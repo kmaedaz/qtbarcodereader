@@ -1,0 +1,87 @@
+
+
+
+2. 鍵の発行
+鍵を発行します.
+
+$ keytool -genkey -v -keystore .keystore -alias qtbarcode  -keyalg RSA -validity 10000
+エイリアス名は自分のアプリ名で良いと思います. 今回は wrapp とします.
+
+$ keytool -genkey -v -keystore .keystore -alias wrapp -keyalg RSA -validity 10000
+
+
+$ keytool -genkey -v -keystore .keystore -alias wrapp -keyalg RSA -validity 10000
+キーストアのパスワードを入力してください:   adeamk2345
+
+新規パスワードを再入力してください: 
+姓名を入力してください。
+  [Unknown]:  phi
+組織単位名を入力してください。
+  [Unknown]:  
+組織名を入力してください。
+  [Unknown]:  
+都市名または地域名を入力してください。
+  [Unknown]:  
+都道府県名を入力してください。
+  [Unknown]:  
+この単位に該当する2文字の国コードを入力してください。
+  [Unknown]:  
+CN=phi, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknownでよろしいですか。  
+  [いいえ]:  y
+
+10,000日間有効な2,048ビットのRSAの鍵ペアと自己署名型証明書(SHA256withRSA)を生成しています  
+  ディレクトリ名: CN=phi, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown
+<wrap>の鍵パスワードを入力してください  
+  (キーストアのパスワードと同じ場合はRETURNを押してください):  
+[.keystoreを格納中]
+
+
+3. 鍵の確認
+下記のコマンドで確認できます.
+
+$ keytool -list -v -keystore key.keystore
+
+cordova build android --release -- --keystore="key.keystore" --storePassword=android --alias=qtbarcode
+
+
+4. 署名
+実際に署名しましょう. 下記のコマンドで署名できます.
+
+$ jarsigner -verbose -keystore key.keystore app-release-unsigned.apk  qtbarcode
+
+wrapp の場合は下記のようになります.
+
+$ jarsigner -verbose -keystore .keystore android-x86-release-unsigned.apk wrapp
+
+
+5. 署名の確認
+上手く言ってれば下記のコマンドで結果を確認できます.
+
+$ jarsigner -verify -verbose -certs app-release-unsigned.apk 
+
+
+
+6. 最適化
+最後に最適化します. zipalign というツールを使います. パスが通っていれば直接使えますが通っていない場合があります. AndroidStudio 経由で下記のディレクトリにあると思うので直接参照するなりパスを追加するなりして使って下さい.
+
+~/Library/Android/sdk/build-tools/<VERSION>/zipalign
+下記のコマンドで最適化できます.
+
+$ zipalign -v 4 <元のapkファイル> <最適化後のapkファイル>
+$ zipalign -v 4 app-release-unsigned.apk app-release-signed.apk
+
+
+今回の場合でいくとこんな感じです.
+
+
+
+シンプルなバーコードリーダー。
+バーコードを読んで、詳細な商品情報を表示します。
+商品にあるバーコードをカメラで読み取り、WEBで検索表示します。
+QRコードの場合は読んだurlを表示します。
+
+
+
+
+
+
